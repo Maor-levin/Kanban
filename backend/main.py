@@ -18,6 +18,22 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+
+# Define allowed origins
+origins = [
+    "http://localhost:3000",  # Frontend URL
+
+]
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,            # Allowed origins
+    allow_credentials=True,           # Allow credentials (cookies, authorization headers)
+    allow_methods=["*"],              # Allow all HTTP methods
+    allow_headers=["*"],              # Allow all headers
+)
+
 # Include your routers
 app.include_router(user_router, prefix="/users")
 app.include_router(task_router, prefix="/api")

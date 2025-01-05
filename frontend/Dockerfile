@@ -5,17 +5,16 @@ FROM node:18-alpine AS build
 WORKDIR /app
 
 # Copy package.json and package-lock.json
-COPY package*.json yarn.lock ./
+COPY package*.json ./
 
 # Install dependencies
-RUN yarn install
+
 RUN npm install
 
 # Copy the rest of the frontend code
 COPY . .
 
 # Build the React app for production
-RUN yarn build
 RUN npm run build
 
 # ====== 2) SERVE STAGE ======
