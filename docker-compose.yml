@@ -1,9 +1,43 @@
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+  db:
+    image: postgres:14
+    container_name: kanban_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: aa123456
+      POSTGRES_DB: kanban
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  fastapi:
+    build: ./backend
+    container_name: kanban_backend
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: aa123456
+      POSTGRES_DB: kanban
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: kanban_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - fastapi
+
+volumes:
+  db_data:

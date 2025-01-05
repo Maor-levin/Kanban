@@ -1,0 +1,73 @@
+/* src/Tasks/tasks.css */
+
+.task-list-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .task-column {
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 8px;
+    width: 30%;
+    min-height: 300px;
+  }
+  
+  .task-column h3 {
+    text-align: center;
+  }
+  
+  .task-column ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .task-item {
+    background: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    cursor: grab;
+  }
+  
+  .task-item:active {
+    cursor: grabbing;
+  }
+  
+  .task-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .task-actions {
+    display: flex;
+    align-items: center;
+  }
+  
+  .task-actions button {
+    margin-left: 5px;
+    padding: 4px 8px;
+    background: #007bff;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .task-actions button:hover {
+    background: #0056b3;
+  }
+  
+  .task-actions .task-status {
+    margin-right: 10px;
+  }
+  
+  .message {
+    color: green;
+    text-align: center;
+    margin-top: 5px;
+  }
+  
