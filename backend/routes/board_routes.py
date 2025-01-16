@@ -1,30 +1,42 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-
-from db.connection import SessionLocal
-from models.board_model import BoardModel
 from models.user_model import UserModel
 from schemas.board_schemas import BoardCreate, BoardOut
-from auth.dependencies import get_current_user
+from auth.dependencies import get_current_user, get_db
+from crud.board_crud import create_board, list_boards, share_board, accept_shared_board
 
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 @router.post("/boards", response_model=BoardOut)
-def create_board(board: BoardCreate, current_user: UserModel = Depends(get_current_user), db: Session = Depends(get_db)):
-    new_board = BoardModel(name=board.name, owner_id=current_user.id)
-    db.add(new_board)
-    db.commit()
-    db.refresh(new_board)
-    return new_board
+def create_board_endpoint(
+    board: BoardCreate,
+    current_user: UserModel = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    return create_board(db, board, current_user)
 
 @router.get("/boards", response_model=list[BoardOut])
-def list_boards(current_user: UserModel = Depends(get_current_user), db: Session = Depends(get_db)):
-    boards = db.query(BoardModel).filter(BoardModel.owner_id == current_user.id).all()
-    return boards
+def list_boards_endpoint(
+    current_user: UserModel = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    return list_boards(db, current_user)
+
+
+@router.post("/boards/{board_id}/share")
+def share_board_endpoint(
+    board_id: int,
+    target_username: str,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    return share_board(db, board_id, target_username, current_user)
+
+@router.post("/boards/{board_id}/accept")
+def accept_shared_board_endpoint(
+    board_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    return accept_shared_board(db, board_id, current_user)
+
