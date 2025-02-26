@@ -1,44 +1,34 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from './Auth/Login';
-import Register from './Auth/Register';
-import BoardList from './Boards/BoardList';
-import Board from './Boards/Board';
-import ProtectedRoute from './ProtectedRoute';
-import Navbar from './Navbar';
-import './index.css'; // Ensure global styles are applied
+// frontend/src/App.js
+import React, { useContext } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { AuthContext } from "./Context/AuthContext";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
+  const { token } = useContext(AuthContext);
+
+  // If user is not logged in, redirect to login
+  const ProtectedRoute = ({ children }) => {
+    return token ? children : <Navigate to="/login" />;
+  };
+
   return (
-    <div className="App">
-      <Navbar />
+    <>
       <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
-        {/* Protected Routes */}
         <Route
-          path="/boards"
+          path="/"
           element={
             <ProtectedRoute>
-              <BoardList />
+              <Dashboard />
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/boards/:id"
-          element={
-            <ProtectedRoute>
-              <Board />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Redirect Unknown Routes to Login */}
-        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </div>
+    </>
   );
 }
 

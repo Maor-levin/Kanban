@@ -1,14 +1,16 @@
-# frontend/Dockerfile
-
 # ====== 1) BUILD STAGE ======
 FROM node:18-alpine AS build
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+ENV NODE_ENV=development
+
+# Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Force installation of devDependencies by setting NODE_ENV to development
+ENV NODE_ENV=development
 
+# Install dependencies (including devDependencies)
 RUN npm install
 
 # Copy the rest of the frontend code
@@ -19,14 +21,7 @@ RUN npm run build
 
 # ====== 2) SERVE STAGE ======
 FROM nginx:alpine
-# Remove default Nginx static files
 RUN rm -rf /usr/share/nginx/html/*
-
-# Copy the build output from the build stage
 COPY --from=build /app/build /usr/share/nginx/html
-
-# Expose port 80 (default for Nginx)
 EXPOSE 80
-
-# Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
